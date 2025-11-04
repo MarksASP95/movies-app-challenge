@@ -1,0 +1,25 @@
+.movie-card {
+  cursor: pointer;
+  .card-options {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(0, -100%);
+    background-color: lab(26.1486% 34.6825 -46.91 / 0.4);
+    border: none;
+    border-radius: 0 var(--radius-container) 0 var(--radius-container);
+    opacity: 0;
+    transition: all 0.1s ease-in-out;
+
+    &__item {
+      font-size: 20px;
+    }
+  }
+
+  &:hover {
+    .card-options {
+      transform: translate(0, 0);
+      opacity: 1;
+    }
+  }
+}
