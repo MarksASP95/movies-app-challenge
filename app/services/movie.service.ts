@@ -1,9 +1,12 @@
-import { PaginatedResult } from "@/lib/models/general.model";
-import { Movie } from "../models/movie.model";
 import { db } from "@/lib/db";
 import { favoritesTable, moviesTable } from "@/lib/db/schema";
-import { and, eq, count } from "drizzle-orm";
-import { timeEnd } from "console";
+import { PaginatedResult } from "@/lib/models/general.model";
+import { and, count, eq } from "drizzle-orm";
+import {
+  FavoriteData,
+  FavoriteMovieUpdateData,
+  Movie,
+} from "../models/movie.model";
 
 interface ServiceResult<T = any> {
   success: boolean;
@@ -308,13 +311,37 @@ export class MovieService {
       )
       .innerJoin(moviesTable, eq(favoritesTable.movieId, moviesTable.id));
 
-    const movies = moviesJoin.map(({ movies }) => {
+    const movies: Movie[] = moviesJoin.map(({ movies }) => {
       return this.movieFromDB(movies);
     });
 
     return {
       data: movies,
       success: true,
+    };
+  }
+
+  async getFavorite(
+    auth0Id: string,
+    tmdbId: number
+  ): Promise<ServiceResult<FavoriteData>> {
+    const moviesJoin = await db
+      .select()
+      .from(favoritesTable)
+      .where(
+        and(
+          eq(favoritesTable.userAuth0Id, auth0Id),
+          eq(favoritesTable.isActive, true),
+          eq(moviesTable.tmdbId, tmdbId)
+        )
+      )
+      .innerJoin(moviesTable, eq(favoritesTable.movieId, moviesTable.id));
+
+    const favoriteData = moviesJoin[0]?.favorites || null;
+
+    return {
+      data: favoriteData,
+      success: !!favoriteData,
     };
   }
 
@@ -328,6 +355,29 @@ export class MovieService {
       .set({
         isActive: setActive,
       })
+      .from(moviesTable)
+      .where(
+        and(
+          eq(moviesTable.id, favoritesTable.movieId),
+          eq(moviesTable.tmdbId, tmdbId),
+          eq(favoritesTable.userAuth0Id, auth0Id)
+        )
+      );
+
+    return {
+      success: true,
+      data: tmdbId,
+    };
+  }
+
+  async updateFavorite(
+    auth0Id: string,
+    tmdbId: number,
+    data: FavoriteMovieUpdateData
+  ): Promise<ServiceResult<number>> {
+    await db
+      .update(favoritesTable)
+      .set(data)
       .from(moviesTable)
       .where(
         and(

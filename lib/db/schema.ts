@@ -33,6 +33,8 @@ export const favoritesTable = pgTable(
       .notNull()
       .references(() => moviesTable.id),
     isActive: boolean().default(true),
+    userTake: varchar({ length: 1000 }),
+    userRating: integer(),
   },
   (table) => {
     return {

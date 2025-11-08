@@ -15,6 +15,13 @@
       "when": 1762221866935,
       "tag": "0001_workable_pretty_boy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762545269227,
+      "tag": "0002_light_network",
+      "breakpoints": true
     }
   ]
 }

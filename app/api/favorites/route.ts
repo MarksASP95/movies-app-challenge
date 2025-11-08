@@ -34,24 +34,3 @@ export async function POST(request: Request) {
   // Respond with a basic message
   return NextResponse.json({ success: result.success, data: result.data });
 }
-
-export async function DELETE(request: Request) {
-  // You can parse request body if needed
-  const session = await auth0.getSession();
-
-  if (!session) {
-    return new NextResponse("unauthenticated", { status: 403 });
-  }
-  const { tmdbId } = (await request.json()) as CreateFavoriteInput;
-
-  const moviesService = new MovieService();
-
-  const result = await moviesService.toggleFavorite(
-    session.user.sub,
-    tmdbId,
-    false
-  );
-
-  // Respond with a basic message
-  return NextResponse.json({ success: result.success, data: result.data });
-}

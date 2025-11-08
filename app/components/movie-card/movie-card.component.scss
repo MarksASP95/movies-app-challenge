@@ -22,4 +22,14 @@
       opacity: 1;
     }
   }
+
+  .movie-modal {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vh;
+    box-sizing: border-box;
+    padding: 20px;
+    max-width: 800px;
+  }
 }
