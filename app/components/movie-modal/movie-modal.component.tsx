@@ -15,7 +15,7 @@ export default function MovieModal({
   movie: Movie;
   favoriteData?: FavoriteData;
   handleClose?: () => void;
-  onFavoriteSave?: (data: { userTake?: string; userRating?: number }) => any;
+  onFavoriteSave?: (data: { userTake: string; userRating?: number }) => any;
 }) {
   const dialogTriggerRef = useRef<HTMLButtonElement>(null);
 
@@ -37,7 +37,7 @@ export default function MovieModal({
   const [userRating, setUserRating] = useState(favoriteData?.userRating || 0);
 
   function submit() {
-    const userTake = (myTakeRef.current!.value || "").trim() || undefined;
+    const userTake = (myTakeRef.current!.value || "").trim() || "";
     onFavoriteSave &&
       onFavoriteSave({ userTake, userRating: userRating || undefined });
   }
