@@ -10,6 +10,7 @@ import { useRatingStars } from "../hooks/useRatingStars";
 import { FavoriteData, Movie } from "../models/movie.model";
 import MovieCard from "./movie-card/movie-card.component";
 import PageSpinner from "./page-spinner/page-spinner.component";
+import MovieModal from "./movie-modal/movie-modal.component";
 
 export default function MoviesGrid({
   movies,
@@ -23,10 +24,6 @@ export default function MoviesGrid({
   keyBuilder?: (movie: Movie) => string;
 }) {
   const toaster = createToaster({ placement: "bottom" });
-
-  const dialogTriggerRef = useRef<HTMLButtonElement>(null);
-
-  const myTakeRef = useRef<HTMLTextAreaElement>(null);
 
   const [selectedMovie, setSelectedMovie] = useState<{
     movie: Movie;
@@ -85,17 +82,7 @@ export default function MoviesGrid({
     setSelectedMovie(null);
   };
 
-  const { starsElements: originalRatingStars } = useRatingStars(
-    selectedMovie?.movie.rating || 0,
-    30
-  );
-  const { starsElements: userRatingStars } = useRatingStars(
-    selectedMovie?.favoriteData?.userRating || 0,
-    30,
-    true,
-    undefined,
-    "var(--color-warning-500)"
-  );
+  function handleUserRatingChange(rating: number) {}
 
   const moviesElements: React.ReactElement[] = useMemo(() => {
     return movies
@@ -124,17 +111,15 @@ export default function MoviesGrid({
       ));
   }, [movies]);
 
-  const handleFavoriteSubmit = () => {
+  const handleFavoriteSubmit = (data: {
+    userTake?: string;
+    userRating?: number;
+  }) => {
     setShowSpinner(true);
-    const take = (myTakeRef.current!.value || "").trim() || undefined;
-    const rating = 6;
-    const body = {} as any;
-    if (take) body.take = take;
-    if (rating) body.rating = rating;
 
     fetch(`/api/favorites/${selectedMovie!.movie.tmdbId}`, {
       method: "put",
-      body: JSON.stringify(body),
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then((resBody) => {
@@ -146,6 +131,7 @@ export default function MoviesGrid({
         setShowSpinner(false);
       });
   };
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-4 gap-4">
@@ -163,79 +149,15 @@ export default function MoviesGrid({
           )}
         </Toast.Group>
 
-        <Dialog open={!!selectedMovie} onEscapeKeyDown={handleClose}>
-          <Dialog.Trigger
-            ref={dialogTriggerRef}
-            className="btn preset-filled hidden"
-          >
-            Trigger
-          </Dialog.Trigger>
-          <Portal>
-            <Dialog.Backdrop className="fixed inset-0 z-50 bg-surface-50-950/50" />
-            <Dialog.Positioner className="fixed inset-0 z-50 flex justify-center items-center">
-              {selectedMovie && (
-                <Dialog.Content className="card bg-surface-100-900 w-2xl p-4 space-y-2 shadow-xl">
-                  <Dialog.Title className="text-2xl font-bold">
-                    {selectedMovie.movie.title}
-                  </Dialog.Title>
-                  {selectedMovie.movie.posterUrl && (
-                    <img
-                      className="w-full h-50 object-cover object-center rounded-sm"
-                      src={selectedMovie.movie.posterUrl}
-                      alt={selectedMovie.movie.title}
-                    />
-                  )}
-                  <div className="flex">{originalRatingStars}</div>
-                  <Dialog.Description>
-                    {selectedMovie.movie.description}
-                  </Dialog.Description>
-
-                  {selectedMovie?.favoriteData && (
-                    <>
-                      <br />
-                      <hr />
-                      <br />
-                      <p className="text-lg text-center">My rating</p>
-                      <div className="flex justify-center">
-                        {userRatingStars}
-                      </div>
-
-                      <br />
-                      <p className="text-lg text-center">My take</p>
-                      <textarea
-                        defaultValue={
-                          selectedMovie?.favoriteData.userTake || ""
-                        }
-                        ref={myTakeRef}
-                        className="textarea"
-                        rows={6}
-                        placeholder=""
-                      ></textarea>
-                    </>
-                  )}
-
-                  <div className="flex justify-center">
-                    {selectedMovie?.favoriteData && (
-                      <button
-                        onClick={handleFavoriteSubmit}
-                        type="button"
-                        className="btn preset-tonal mx-3"
-                      >
-                        Save
-                      </button>
-                    )}
-                    <Dialog.CloseTrigger
-                      onClick={handleClose}
-                      className="btn preset-tonal mx-2"
-                    >
-                      Close
-                    </Dialog.CloseTrigger>
-                  </div>
-                </Dialog.Content>
-              )}
-            </Dialog.Positioner>
-          </Portal>
-        </Dialog>
+        {selectedMovie && (
+          <MovieModal
+            isOpen={!!selectedMovie}
+            movie={selectedMovie.movie}
+            favoriteData={selectedMovie.favoriteData}
+            handleClose={() => setSelectedMovie(null)}
+            onFavoriteSave={handleFavoriteSubmit}
+          />
+        )}
       </div>
       <PageSpinner visible={showSpinner} />
     </>

@@ -21,8 +21,8 @@ export interface CreateFavoriteInput {
 export type FavoriteData = typeof favoritesTable.$inferSelect;
 
 export interface UpdateFavoriteInput {
-  take?: string;
-  rating?: number;
+  userTake?: string;
+  userRating?: number;
 }
 
 export type FavoriteMovieUpdateData = Pick<

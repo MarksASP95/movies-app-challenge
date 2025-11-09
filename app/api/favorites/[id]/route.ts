@@ -62,7 +62,8 @@ export async function PUT(
     return new NextResponse("unauthenticated", { status: 403 });
   }
   const { id: tmdbId } = await params;
-  const { rating, take } = (await request.json()) as UpdateFavoriteInput;
+  const { userRating, userTake } =
+    (await request.json()) as UpdateFavoriteInput;
 
   const moviesService = new MovieService();
 
@@ -70,8 +71,8 @@ export async function PUT(
     session.user.sub,
     parseInt(tmdbId),
     {
-      userRating: rating,
-      userTake: take,
+      userRating,
+      userTake,
     }
   );
 
