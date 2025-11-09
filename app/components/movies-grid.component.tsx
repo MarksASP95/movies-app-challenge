@@ -1,16 +1,10 @@
 "use client";
-import {
-  Dialog,
-  Portal,
-  Toast,
-  createToaster,
-} from "@skeletonlabs/skeleton-react";
-import React, { useMemo, useRef, useState } from "react";
-import { useRatingStars } from "../hooks/useRatingStars";
+import { Toast, createToaster } from "@skeletonlabs/skeleton-react";
+import React, { useMemo, useState } from "react";
 import { FavoriteData, Movie } from "../models/movie.model";
 import MovieCard from "./movie-card/movie-card.component";
-import PageSpinner from "./page-spinner/page-spinner.component";
 import MovieModal from "./movie-modal/movie-modal.component";
+import PageSpinner from "./page-spinner/page-spinner.component";
 
 export default function MoviesGrid({
   movies,
@@ -112,7 +106,7 @@ export default function MoviesGrid({
   }, [movies]);
 
   const handleFavoriteSubmit = (data: {
-    userTake?: string;
+    userTake: string;
     userRating?: number;
   }) => {
     setShowSpinner(true);
@@ -123,9 +117,10 @@ export default function MoviesGrid({
     })
       .then((res) => res.json())
       .then((resBody) => {
-        if (resBody.success) {
-          setSelectedMovie(null);
+        if (!resBody.success) {
+          return toaster.error({ title: "Could not update movie" });
         }
+        setSelectedMovie(null);
       })
       .finally(() => {
         setShowSpinner(false);
