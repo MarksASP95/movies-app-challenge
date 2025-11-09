@@ -1,17 +1,11 @@
 import {
+  boolean,
   doublePrecision,
   integer,
   pgTable,
   primaryKey,
   varchar,
-  boolean,
 } from "drizzle-orm/pg-core";
-
-// export const usersTable = pgTable("users", {
-//   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-//   auth0Id: varchar({ length: 255 }).notNull().unique(),
-//   email: varchar("email", { length: 255 }).notNull().unique(),
-// });
 
 export const moviesTable = pgTable("movies", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

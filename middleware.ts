@@ -1,6 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest } from "next/server";
 import { auth0 } from "./lib/auth0";
-import { redirect } from "next/dist/server/api-utils";
 
 function isProtectedRoute(req: NextRequest) {
   switch (req.nextUrl.pathname) {
@@ -22,14 +21,13 @@ export async function middleware(req: NextRequest) {
   if (getPathName(req) === "/auth/callback") {
     console.log("ON CALLBACK");
     console.log("SESSION IS", session);
-
   }
 
   if (isProtectedRoute(req) && !session) {
     // return NextResponse.redirect(new URL("/auth/login", req.url));
   }
   const res = await auth0.middleware(req);
-  // console.log("RES IS", res); 
+  // console.log("RES IS", res);
   return res;
 }
 

@@ -1,7 +1,7 @@
 "use client";
 import { SearchIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { KeyboardEvent, KeyboardEventHandler, useRef } from "react";
+import { KeyboardEvent, useRef } from "react";
 
 export default function MoviesSearchBar() {
   const inputRef = useRef<HTMLInputElement>(null);

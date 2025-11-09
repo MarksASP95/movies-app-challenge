@@ -1,11 +1,10 @@
 import { UpdateFavoriteInput } from "@/app/models/movie.model";
 import { MovieService } from "@/app/services/movie.service";
 import { auth0 } from "@/lib/auth0";
-import { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  _: NextApiRequest,
+  _: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   // You can parse request body if needed
@@ -28,7 +27,7 @@ export async function GET(
 }
 
 export async function DELETE(
-  _: NextApiRequest,
+  _: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   // You can parse request body if needed

@@ -1,10 +1,10 @@
 "use client";
 
 import { useMovieCardElements } from "@/app/hooks/useMovieCardElements";
+import { useRatingStars } from "@/app/hooks/useRatingStars";
 import { MouseEvent, useMemo, useState } from "react";
 import { Movie } from "../../models/movie.model";
 import "./movie-card.component.scss";
-import { useRatingStars } from "@/app/hooks/useRatingStars";
 
 export default function MovieCard({
   movie,

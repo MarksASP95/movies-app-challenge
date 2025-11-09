@@ -37,7 +37,7 @@ export default async function Search({
         Results for "<i>{searchValue}</i>"
       </h2>
 
-      <MoviesGrid movies={movies} />
+      <MoviesGrid movies={movies} type="search" />
     </div>
   );
 }

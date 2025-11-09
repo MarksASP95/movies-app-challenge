@@ -13,7 +13,7 @@ export default function MoviesGrid({
   favoritesIds = [],
 }: {
   movies: Movie[];
-  type: "favorites" | "trending";
+  type: "favorites" | "trending" | "search";
   favoritesIds?: number[];
   keyBuilder?: (movie: Movie) => string;
 }) {

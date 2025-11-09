@@ -1,4 +1,4 @@
-import { favoritesTable, moviesTable } from "@/lib/db/schema";
+import { favoritesTable } from "@/lib/db/schema";
 
 export interface Movie {
   title: string;

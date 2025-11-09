@@ -1,6 +1,5 @@
 import MoviesGrid from "@/app/components/movies-grid.component";
 import MoviesSearchBar from "@/app/components/search-bar.component";
-import { Movie } from "@/app/models/movie.model";
 import { MovieService } from "@/app/services/movie.service";
 import { auth0 } from "@/lib/auth0";
 

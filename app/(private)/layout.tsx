@@ -1,7 +1,7 @@
 import { auth0 } from "@/lib/auth0";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
-import { MovieService } from "../services/movie.service";
 
 const PrivateViewsLayout = async ({
   children,
@@ -22,21 +22,21 @@ const PrivateViewsLayout = async ({
         </a>
 
         <div className="flex">
-          <a
+          <Link
             className="mr-2 underline decoration-dashed underline-offset-4"
             href="/favorites"
           >
             ❤️ my favorites
-          </a>
+          </Link>
           <span className="mr-2">|</span>
           <span className="mr-2">👨🏻 {session.user.email}</span>
           <span className="mr-2">|</span>
-          <a
+          <Link
             className="mr-2 underline decoration-dashed underline-offset-4"
             href="/auth/logout"
           >
             ❌ sign out
-          </a>
+          </Link>
         </div>
       </div>
       <div className="px-10 pb-10">{children}</div>
