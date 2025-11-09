@@ -26,7 +26,6 @@ export default function MoviesGrid({
   } | null>(null);
 
   const [removedIdsMap, setRemovedIdsMap] = useState<Record<number, true>>([]);
-  const [submittingMovieModal, setSubmittingMovieModal] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
 
   function addToRemovedIds(id: number) {
@@ -71,13 +70,6 @@ export default function MoviesGrid({
     setShowSpinner(false);
   };
 
-  const handleClose = () => {
-    if (submittingMovieModal) return;
-    setSelectedMovie(null);
-  };
-
-  function handleUserRatingChange(rating: number) {}
-
   const moviesElements: React.ReactElement[] = useMemo(() => {
     return movies
       .filter((movie) => !removedIdsMap[movie.tmdbId])
@@ -87,23 +79,23 @@ export default function MoviesGrid({
           alreadyFavorite={type === "favorites" || favoritesMap[movie.tmdbId]}
           enableRemoveFromFavorites={type === "favorites"}
           canFavorite={type !== "favorites"}
-          onFavorited={(tmdbId: number) => {
+          onFavorited={() => {
             toaster.success({
               title: "Added to Favorites",
             });
           }}
           onUnfavorited={(tmdbId: number) => {
-            if (type !== "favorites") return;
-            addToRemovedIds(tmdbId);
             toaster.success({
               title: "Removed from Favorites",
             });
+            if (type !== "favorites") return;
+            addToRemovedIds(tmdbId);
           }}
           key={keyBuilder ? keyBuilder(movie) : movie.tmdbId}
           movie={movie}
         />
       ));
-  }, [movies]);
+  }, [movies, removedIdsMap, toaster]);
 
   const handleFavoriteSubmit = (data: {
     userTake: string;
