@@ -11,7 +11,7 @@ const PrivateViewsLayout = async ({
   const session = await auth0.getSession();
 
   if (!session) {
-    redirect("/auth/login");
+    return redirect("/auth/login");
   }
 
   return (
