@@ -15,9 +15,6 @@ function isProtectedRoute(req: NextRequest) {
 const getPathName = (req: NextRequest) => req.nextUrl.pathname;
 
 export async function middleware(req: NextRequest) {
-  // console.log("is protected", isProtectedRoute(request));
-
-  console.log("AUTH0 SECRET (from middleware)", process.env.AUTH0_SECRET);
 
   const session = await auth0.getSession(req);
   if (getPathName(req) === "/auth/callback") {
@@ -25,11 +22,7 @@ export async function middleware(req: NextRequest) {
     console.log("SESSION IS", session);
   }
 
-  if (isProtectedRoute(req) && !session) {
-    // return NextResponse.redirect(new URL("/auth/login", req.url));
-  }
   const res = await auth0.middleware(req);
-  // console.log("RES IS", res);
   return res;
 }
 
