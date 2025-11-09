@@ -17,6 +17,8 @@ const getPathName = (req: NextRequest) => req.nextUrl.pathname;
 export async function middleware(req: NextRequest) {
   // console.log("is protected", isProtectedRoute(request));
 
+  console.log("AUTH0 SECRET (from middleware)", process.env.AUTH0_SECRET);
+
   const session = await auth0.getSession(req);
   if (getPathName(req) === "/auth/callback") {
     console.log("ON CALLBACK");

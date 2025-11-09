@@ -8,6 +8,7 @@ const PrivateViewsLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  console.log("AUTH0 SECRET (from layout)", process.env.AUTH0_SECRET);
   const session = await auth0.getSession();
 
   if (!session) {
