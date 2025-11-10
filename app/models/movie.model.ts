@@ -1,4 +1,4 @@
-import { favoritesTable } from "@/lib/db/schema";
+import { favoritesTable, moviesTable } from "@/lib/db/schema";
 
 export interface Movie {
   title: string;
@@ -20,6 +20,7 @@ export interface CreateFavoriteInput {
 }
 
 export type FavoriteData = typeof favoritesTable.$inferSelect;
+export type MovieDB = typeof moviesTable.$inferSelect;
 
 export interface UpdateFavoriteInput {
   userTake?: string;
