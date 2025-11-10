@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MovieService } from "../movie.service";
+import { TMDB } from "@/app/models/tmdb.model";
 
 // Mock fetch globally
 global.fetch = vi.fn();
@@ -14,9 +15,9 @@ describe("MovieService", () => {
     process.env.TMDB_READ_ACCESS_TOKEN = mockTmdbToken;
   });
 
-  describe("movieFromJson", () => {
-    it("should transform json movie with complete data", () => {
-      const rawMovie = {
+  describe("serializeMovie", () => {
+    it("should serialize search movie with complete data", () => {
+      const rawMovie: TMDB.SearchResult = {
         id: 123,
         original_title: "some movie",
         poster_path: "/poster.jpg",
@@ -24,10 +25,11 @@ describe("MovieService", () => {
         overview: "some description",
         vote_average: 8,
         title: "some movie",
+        genre_ids: [12],
       };
 
       // Access private method via type assertion
-      const result = (movieService as any).movieFromJson(rawMovie);
+      const result = (movieService as any).serializeMovieFromResult(rawMovie);
 
       expect(result).toEqual({
         tmdbId: 123,
@@ -40,11 +42,42 @@ describe("MovieService", () => {
           month: 5,
           day: 15,
         },
+        genre: "Adventure",
+      });
+    });
+
+    it("should serialize movie from details with complete data", () => {
+      const rawMovie: TMDB.MovieDetails = {
+        id: 123,
+        original_title: "some movie",
+        poster_path: "/poster.jpg",
+        release_date: "2023-05-15",
+        overview: "some description",
+        vote_average: 8,
+        title: "some movie",
+        genres: [{ id: 12, name: "Adventure" }],
+      };
+
+      // Access private method via type assertion
+      const result = (movieService as any).serializeMovieFromDetails(rawMovie);
+
+      expect(result).toEqual({
+        tmdbId: 123,
+        title: "some movie",
+        description: "some description",
+        posterUrl: "https://image.tmdb.org/t/p/original/poster.jpg",
+        rating: 8,
+        releaseDate: {
+          year: 2023,
+          month: 5,
+          day: 15,
+        },
+        genre: "Adventure",
       });
     });
 
     it("should handle movie without poster path", () => {
-      const rawMovie = {
+      const rawMovie: TMDB.SearchResult = {
         id: 456,
         original_title: "No Poster Movie",
         poster_path: null,
@@ -52,16 +85,17 @@ describe("MovieService", () => {
         overview: "Description",
         vote_average: 7.0,
         title: "No Poster Movie",
+        genre_ids: [12],
       };
 
-      const result = (movieService as any).movieFromJson(rawMovie);
+      const result = (movieService as any).serializeMovieFromResult(rawMovie);
 
       expect(result.posterUrl).toBeNull();
       expect(result.tmdbId).toBe(456);
     });
 
     it("should handle movie without release date", () => {
-      const rawMovie = {
+      const rawMovie: TMDB.SearchResult = {
         id: 789,
         original_title: "No Date Movie",
         poster_path: "/poster.jpg",
@@ -69,9 +103,10 @@ describe("MovieService", () => {
         overview: "Description",
         vote_average: 6.5,
         title: "No Date Movie",
+        genre_ids: [12],
       };
 
-      const result = (movieService as any).movieFromJson(rawMovie);
+      const result = (movieService as any).serializeMovieFromResult(rawMovie);
 
       expect(result.releaseDate).toBeNull();
     });
@@ -89,6 +124,7 @@ describe("MovieService", () => {
         day: 20,
         rating: 9.0,
         tmdbId: 999,
+        genre: "Adventure",
       };
 
       const result = (movieService as any).movieFromDB(dbMovie);
@@ -104,6 +140,7 @@ describe("MovieService", () => {
           month: 6,
           day: 20,
         },
+        genre: "Adventure",
       });
     });
   });
