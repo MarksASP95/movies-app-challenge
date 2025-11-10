@@ -9,7 +9,6 @@
     "lint": "eslint",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
     "test:run": "vitest run"
   },
   "dependencies": {
