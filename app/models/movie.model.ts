@@ -29,3 +29,9 @@ export type FavoriteMovieUpdateData = Pick<
   typeof favoritesTable.$inferInsert,
   "userRating" | "userTake"
 >;
+
+export interface RecommendedMovie {
+  title: string;
+  genre: string;
+  year: number;
+}

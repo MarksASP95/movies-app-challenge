@@ -1,10 +1,11 @@
 "use client";
 import { Toast, createToaster } from "@skeletonlabs/skeleton-react";
 import React, { useMemo, useState } from "react";
-import { FavoriteData, Movie } from "../models/movie.model";
+import { FavoriteData, Movie, RecommendedMovie } from "../models/movie.model";
 import MovieCard from "./movie-card/movie-card.component";
 import MovieModal from "./movie-modal/movie-modal.component";
 import PageSpinner from "./page-spinner/page-spinner.component";
+import RecommendationsModal from "./recommendations-modal/recommendations-modal.component";
 
 export default function MoviesGrid({
   movies,
@@ -23,6 +24,11 @@ export default function MoviesGrid({
     movie: Movie;
     favoriteData?: FavoriteData;
     isFavorite: boolean;
+  } | null>(null);
+
+  const [recommendations, setRecommendations] = useState<{
+    sourceTitle: string;
+    list: RecommendedMovie[];
   } | null>(null);
 
   const [removedIdsMap, setRemovedIdsMap] = useState<Record<number, true>>([]);
@@ -70,6 +76,26 @@ export default function MoviesGrid({
     setShowSpinner(false);
   };
 
+  async function handleRecommendationsClick(movie: Movie) {
+    setShowSpinner(true);
+    const response = await fetch(`/api/recommendations/${movie.tmdbId}`).then(
+      (res) => res.json()
+    );
+
+    if (!response.success) {
+      toaster.error({ title: "Could not load recommendations" });
+      setShowSpinner(false);
+      return;
+    }
+
+    setRecommendations({
+      list: response.data,
+      sourceTitle: movie.title,
+    });
+
+    setShowSpinner(false);
+  }
+
   const moviesElements: React.ReactElement[] = useMemo(() => {
     return movies
       .filter((movie) => !removedIdsMap[movie.tmdbId])
@@ -93,6 +119,7 @@ export default function MoviesGrid({
           }}
           key={keyBuilder ? keyBuilder(movie) : movie.tmdbId}
           movie={movie}
+          onRecommendationsClick={handleRecommendationsClick}
         />
       ));
   }, [movies, removedIdsMap, toaster]);
@@ -135,6 +162,15 @@ export default function MoviesGrid({
             </Toast>
           )}
         </Toast.Group>
+
+        {recommendations?.list && (
+          <RecommendationsModal
+            isOpen={!!recommendations}
+            recommendations={recommendations.list}
+            handleClose={() => setRecommendations(null)}
+            movieTitle={recommendations?.sourceTitle}
+          />
+        )}
 
         {selectedMovie && (
           <MovieModal

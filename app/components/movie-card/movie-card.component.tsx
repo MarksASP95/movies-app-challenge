@@ -14,6 +14,7 @@ export default function MovieCard({
   onFavorited = (tmdbId: number) => tmdbId,
   onUnfavorited = (tmdbId: number) => tmdbId,
   onSelected = () => null,
+  onRecommendationsClick,
 }: {
   movie: Movie;
   alreadyFavorite: boolean;
@@ -22,6 +23,7 @@ export default function MovieCard({
   onUnfavorited?: (tmdbId: number) => any;
   enableRemoveFromFavorites?: boolean;
   onSelected?: (movie: Movie, isFavorite: boolean) => any;
+  onRecommendationsClick: (movie: Movie) => any;
 }) {
   const { dateStr, toggleFavorite, favoritting, madeFavorite } =
     useMovieCardElements(movie, alreadyFavorite, onFavorited, onUnfavorited);
@@ -61,7 +63,15 @@ export default function MovieCard({
             {favoriteEmoji}
           </div>
           <div className="card-options__item mr-4">👁️</div>
-          <div className="card-options__item">🪄</div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onRecommendationsClick(movie);
+            }}
+            className="card-options__item"
+          >
+            🪄
+          </div>
         </div>
         {/* Header */}
         <header>

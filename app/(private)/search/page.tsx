@@ -30,7 +30,7 @@ export default async function Search({
   const movies = searchResult.data!.results;
 
   return (
-    <div className="p-10">
+    <div>
       <MoviesSearchBar />
 
       <h2 className="text-xl mb-2">

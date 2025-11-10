@@ -2,10 +2,14 @@ import { db } from "@/lib/db";
 import { favoritesTable, moviesTable } from "@/lib/db/schema";
 import { PaginatedResult } from "@/lib/models/general.model";
 import { and, count, eq } from "drizzle-orm";
+import OpenAI from "openai";
+import { zodTextFormat } from "openai/helpers/zod.mjs";
+import z from "zod";
 import {
   FavoriteData,
   FavoriteMovieUpdateData,
   Movie,
+  RecommendedMovie,
 } from "../models/movie.model";
 
 interface ServiceResult<T = any> {
@@ -98,7 +102,7 @@ export class MovieService {
         : null,
       rating: rawMovie.vote_average,
       releaseDate,
-      title: rawMovie.original_title,
+      title: rawMovie.title,
       tmdbId: rawMovie.id,
     };
   }
@@ -390,6 +394,58 @@ export class MovieService {
     return {
       success: true,
       data: tmdbId,
+    };
+  }
+
+  async getRecommendations(
+    tmdbId: number
+  ): Promise<ServiceResult<RecommendedMovie[]>> {
+    const url = `${this.TMDB_DOMAIN}movie/${tmdbId}`;
+
+    const result = await this.fetchTMDB<TMDBSearchResult>(url);
+
+    if (!result.success) {
+      return {
+        success: false,
+        data: null,
+      };
+    }
+
+    const movieTitle = result.data!.title;
+
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const z_MovieRecommentations = z.object({
+      recommendations: z.array(
+        z.object({
+          genre: z.string(),
+          title: z.string(),
+          year: z.number(),
+        })
+      ),
+    });
+
+    const response = await client.responses.parse({
+      model: "gpt-4o-mini",
+      input: [
+        {
+          role: "system",
+          content:
+            "You are a movie recommendation assistant. You will give 5 similiar movies based on the movie that the user gives you",
+        },
+        {
+          role: "user",
+          content: `Recommend movies similar to ${movieTitle}`,
+        },
+      ],
+      text: {
+        format: zodTextFormat(z_MovieRecommentations, "recommendations"),
+      },
+    });
+
+    const recommendations = response.output_parsed?.recommendations || null;
+    return {
+      data: recommendations,
+      success: !!recommendations,
     };
   }
 }
