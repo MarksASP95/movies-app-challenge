@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { favoritesTable, moviesTable } from "@/lib/db/schema";
 import { PaginatedResult } from "@/lib/models/general.model";
-import { and, count, eq } from "drizzle-orm";
+import { and, asc, count, eq } from "drizzle-orm";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod.mjs";
 import z from "zod";
@@ -43,6 +43,7 @@ export class MovieService {
   private readonly TMDB_READ_ACCESS_TOKEN = process.env
     .TMDB_READ_ACCESS_TOKEN as string;
   private readonly TMDB_DOMAIN = "https://api.themoviedb.org/3/";
+  private readonly FAVORITES_PAGE_SIZE = 8;
 
   private async fetchTMDB<T>(url: string): Promise<ServiceResult<T>> {
     try {
@@ -148,7 +149,7 @@ export class MovieService {
     value: string,
     page: number
   ): Promise<ServiceResult<PaginatedResult<Movie>>> {
-    const url = `${this.TMDB_DOMAIN}search/movie?query=${value}&page=1`;
+    const url = `${this.TMDB_DOMAIN}search/movie?query=${value}&page=${page}`;
     const result = await this.fetchTMDB<TMDBSearchResponse>(url);
 
     if (!result.success) {
@@ -262,8 +263,6 @@ export class MovieService {
             data: savedMovie.tmdbId,
           };
         } catch (error) {
-          console.log("error was", error);
-          // tx.rollback();
           return {
             success: false,
             data: null,
@@ -271,7 +270,6 @@ export class MovieService {
         }
       })
       .catch((err) => {
-        console.log("ERROR", err);
         return {
           data: null,
           success: false,
@@ -321,6 +319,60 @@ export class MovieService {
 
     return {
       data: movies,
+      success: true,
+    };
+  }
+
+  private async getTotalUserFavorites(auth0Id: string): Promise<number> {
+    const [{ count: totalCount }] = await db
+      .select({ count: count() })
+      .from(favoritesTable)
+      .where(
+        and(
+          eq(favoritesTable.userAuth0Id, auth0Id),
+          eq(favoritesTable.isActive, true)
+        )
+      );
+
+    return totalCount;
+  }
+
+  async getUserFavoritesPaginated(
+    auth0Id: string,
+    page: number
+  ): Promise<ServiceResult<PaginatedResult<Movie>>> {
+    const moviesJoinPromise = db
+      .select()
+      .from(favoritesTable)
+      .where(
+        and(
+          eq(favoritesTable.userAuth0Id, auth0Id),
+          eq(favoritesTable.isActive, true)
+        )
+      )
+      .innerJoin(moviesTable, eq(favoritesTable.movieId, moviesTable.id))
+      .orderBy(asc(favoritesTable.movieId)) // order by is mandatory
+      .limit(this.FAVORITES_PAGE_SIZE)
+      .offset(this.FAVORITES_PAGE_SIZE * (page - 1));
+
+    const countPromise = this.getTotalUserFavorites(auth0Id);
+
+    const [moviesJoin, count] = await Promise.all([
+      moviesJoinPromise,
+      countPromise,
+    ]);
+
+    const movies: Movie[] = moviesJoin.map(({ movies }) => {
+      return this.movieFromDB(movies);
+    });
+
+    return {
+      data: {
+        page,
+        pageSize: this.FAVORITES_PAGE_SIZE,
+        results: movies,
+        totalResults: count,
+      },
       success: true,
     };
   }

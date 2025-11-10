@@ -54,7 +54,7 @@ export default function MoviesGrid({
 
   const handleMovieSelected = async (movie: Movie, isFavorite: boolean) => {
     let favoriteData: FavoriteData | undefined;
-    if (isFavorite && type === "favorites") {
+    if (isFavorite) {
       setShowSpinner(true);
       const result = await fetch(`/api/favorites/${movie.tmdbId}`).then((res) =>
         res.json()
