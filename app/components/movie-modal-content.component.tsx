@@ -2,7 +2,7 @@ import { useRatingStars } from "@/app/hooks/useRatingStars";
 import { FavoriteData, Movie } from "@/app/models/movie.model";
 import { Dialog, Portal } from "@skeletonlabs/skeleton-react";
 import React, { useRef, useState } from "react";
-import PageSpinner from "../page-spinner/page-spinner.component";
+import PageSpinner from "./page-spinner.component";
 
 export default function MovieModalContent({
   handleClose,

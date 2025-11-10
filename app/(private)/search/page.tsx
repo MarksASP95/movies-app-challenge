@@ -1,5 +1,5 @@
 import MoviesGrid from "@/app/components/movies-grid.component";
-import Pagination from "@/app/components/pagination/pagination.component";
+import Pagination from "@/app/components/pagination.component";
 import MoviesSearchBar from "@/app/components/search-bar.component";
 import { MovieService } from "@/app/services/movie.service";
 import { auth0 } from "@/lib/auth0";

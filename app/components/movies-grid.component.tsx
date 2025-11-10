@@ -3,8 +3,8 @@ import { Dialog, Toast, createToaster } from "@skeletonlabs/skeleton-react";
 import React, { useMemo, useState } from "react";
 import { FavoriteData, Movie, RecommendedMovie } from "../models/movie.model";
 import MovieCard from "./movie-card/movie-card.component";
-import MovieModalContent from "./movie-modal/movie-modal-content.component";
-import PageSpinner from "./page-spinner/page-spinner.component";
+import MovieModalContent from "./movie-modal-content.component";
+import PageSpinner from "./page-spinner.component";
 import RecommendationsModal from "./recommendations-modal/recommendations-modal.component";
 
 export default function MoviesGrid({
