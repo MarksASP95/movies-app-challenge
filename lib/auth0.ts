@@ -10,7 +10,7 @@ export const auth0 = new Auth0Client({
     session: SessionData | null
   ) => {
     return NextResponse.redirect(
-      new URL(ctx.returnTo ?? "/", process.env.APP_BASE_URL)
+      new URL(ctx.returnTo ?? "/handle-login", process.env.APP_BASE_URL)
     );
   },
 });
