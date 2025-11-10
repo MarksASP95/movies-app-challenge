@@ -15,6 +15,7 @@ frontend:
         - echo "AUTH0_CLIENT_SECRET=$AUTH0_CLIENT_SECRET" >> .env
         - echo "AUTH0_SECRET=$AUTH0_SECRET" >> .env
         - echo "APP_BASE_URL=$APP_BASE_URL" >> .env
+        - echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> .env
         - npm run build
   artifacts:
     baseDirectory: .next
