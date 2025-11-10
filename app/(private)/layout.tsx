@@ -17,9 +17,9 @@ const PrivateViewsLayout = async ({
   return (
     <div>
       <div className="px-10 py-2 w-screen flex justify-between">
-        <a className="underline decoration-dashed underline-offset-4" href="/">
+        <Link className="underline decoration-dashed underline-offset-4" href="/">
           Movies
-        </a>
+        </Link>
 
         <div className="flex">
           <Link
