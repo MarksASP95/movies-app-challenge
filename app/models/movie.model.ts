@@ -12,6 +12,7 @@ export interface Movie {
   rating: number;
   tmdbId: number;
   favoriteId?: number;
+  genre: string | null;
 }
 
 export interface CreateFavoriteInput {

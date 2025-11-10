@@ -71,6 +71,7 @@ export default function MovieModal({
                   />
                 )}
                 <div className="flex">{originalRatingStars}</div>
+                <p>{movie.genre}</p>
                 <Dialog.Description>{movie.description}</Dialog.Description>
 
                 {favoriteData && (

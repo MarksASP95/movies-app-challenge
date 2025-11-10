@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { favoritesTable, moviesTable } from "@/lib/db/schema";
-import { PaginatedResult } from "@/lib/models/general.model";
+import { PaginatedResult, ServiceResult } from "@/app/models/general.model";
 import { and, asc, count, eq } from "drizzle-orm";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod.mjs";
@@ -11,39 +11,19 @@ import {
   Movie,
   RecommendedMovie,
 } from "../models/movie.model";
-
-interface ServiceResult<T = any> {
-  success: boolean;
-  data: T | null;
-}
-
-interface TMDBErrorResponse {
-  success?: boolean;
-  status_code?: number;
-}
-
-interface TMDBSearchResult {
-  id: number;
-  original_title: string;
-  poster_path: string;
-  release_date?: string;
-  title: string;
-  overview: string;
-  vote_average: number;
-}
-
-interface TMDBSearchResponse {
-  page: number;
-  results: TMDBSearchResult[];
-  total_pages: number;
-  total_results: number;
-}
+import { TMDB } from "../models/tmdb.model";
+import { ObjectUtils } from "../utilts/object.util";
+import { MOVIE_GENRES } from "../constants/movie.const";
 
 export class MovieService {
   private readonly TMDB_READ_ACCESS_TOKEN = process.env
     .TMDB_READ_ACCESS_TOKEN as string;
   private readonly TMDB_DOMAIN = "https://api.themoviedb.org/3/";
   private readonly FAVORITES_PAGE_SIZE = 8;
+
+  get genresById() {
+    return ObjectUtils.buildRecord(MOVIE_GENRES, "id");
+  }
 
   private async fetchTMDB<T>(url: string): Promise<ServiceResult<T>> {
     try {
@@ -63,7 +43,7 @@ export class MovieService {
 
       const data = await response.json();
 
-      if ((data as TMDBErrorResponse).success === false) {
+      if ((data as TMDB.ErrorResponse).success === false) {
         return {
           success: false,
           data: null,
@@ -83,7 +63,7 @@ export class MovieService {
     }
   }
 
-  private movieFromJson(rawMovie: TMDBSearchResult): Movie {
+  private serializeMovieFromResult(rawMovie: TMDB.SearchResult): Movie {
     let releaseDate = null;
     if (rawMovie.release_date) {
       const [year, month, day] = rawMovie.release_date
@@ -96,6 +76,7 @@ export class MovieService {
         day,
       };
     }
+
     return {
       description: rawMovie.overview,
       posterUrl: rawMovie.poster_path
@@ -105,6 +86,36 @@ export class MovieService {
       releaseDate,
       title: rawMovie.title,
       tmdbId: rawMovie.id,
+      genre: rawMovie.genre_ids[0]
+        ? this.genresById[rawMovie.genre_ids[0]].name
+        : null,
+    };
+  }
+
+  private serializeMovieFromDetails(rawMovie: TMDB.MovieDetails): Movie {
+    let releaseDate = null;
+    if (rawMovie.release_date) {
+      const [year, month, day] = rawMovie.release_date
+        .split("-")
+        .map((num) => parseInt(num));
+
+      releaseDate = {
+        year,
+        month,
+        day,
+      };
+    }
+
+    return {
+      description: rawMovie.overview,
+      posterUrl: rawMovie.poster_path
+        ? `https://image.tmdb.org/t/p/original${rawMovie.poster_path}`
+        : null,
+      rating: rawMovie.vote_average,
+      releaseDate,
+      title: rawMovie.title,
+      tmdbId: rawMovie.id,
+      genre: rawMovie.genres[0]?.name || null,
     };
   }
 
@@ -122,13 +133,14 @@ export class MovieService {
         : null,
       title: dbMovie.title,
       tmdbId: dbMovie.tmdbId,
+      genre: dbMovie.genre,
     };
   }
 
   async getTrending(): Promise<ServiceResult<{ movies: Movie[] }>> {
     const url = `${this.TMDB_DOMAIN}trending/movie/day`;
 
-    const result = await this.fetchTMDB<TMDBSearchResponse>(url);
+    const result = await this.fetchTMDB<TMDB.SearchResponse>(url);
 
     if (!result.success) {
       return {
@@ -140,7 +152,9 @@ export class MovieService {
     return {
       success: true,
       data: {
-        movies: result.data!.results.map(this.movieFromJson),
+        movies: result.data!.results.map(
+          this.serializeMovieFromResult.bind(this)
+        ),
       },
     };
   }
@@ -150,7 +164,7 @@ export class MovieService {
     page: number
   ): Promise<ServiceResult<PaginatedResult<Movie>>> {
     const url = `${this.TMDB_DOMAIN}search/movie?query=${value}&page=${page}`;
-    const result = await this.fetchTMDB<TMDBSearchResponse>(url);
+    const result = await this.fetchTMDB<TMDB.SearchResponse>(url);
 
     if (!result.success) {
       return {
@@ -164,7 +178,9 @@ export class MovieService {
       data: {
         page,
         pageSize: 20,
-        results: result.data!.results.map(this.movieFromJson),
+        results: result.data!.results.map(
+          this.serializeMovieFromResult.bind(this)
+        ),
         totalResults: result.data!.total_results,
       },
     };
@@ -172,7 +188,7 @@ export class MovieService {
 
   async getByIdAPI(tmdb: number): Promise<ServiceResult<Movie>> {
     const url = `${this.TMDB_DOMAIN}movie/${tmdb}`;
-    const result = await this.fetchTMDB<TMDBSearchResult>(url);
+    const result = await this.fetchTMDB<TMDB.MovieDetails>(url);
 
     if (!result.success) {
       return {
@@ -183,7 +199,7 @@ export class MovieService {
 
     return {
       success: true,
-      data: this.movieFromJson(result.data!),
+      data: this.serializeMovieFromDetails(result.data!),
     };
   }
 
@@ -454,7 +470,7 @@ export class MovieService {
   ): Promise<ServiceResult<RecommendedMovie[]>> {
     const url = `${this.TMDB_DOMAIN}movie/${tmdbId}`;
 
-    const result = await this.fetchTMDB<TMDBSearchResult>(url);
+    const result = await this.fetchTMDB<TMDB.SearchResult>(url);
 
     if (!result.success) {
       return {

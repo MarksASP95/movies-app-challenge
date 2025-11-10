@@ -17,6 +17,7 @@ export const moviesTable = pgTable("movies", {
   month: integer(),
   rating: doublePrecision(),
   tmdbId: integer().unique().notNull(),
+  genre: varchar({ length: 255 }),
 });
 
 export const favoritesTable = pgTable(

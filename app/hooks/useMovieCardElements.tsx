@@ -1,4 +1,4 @@
-import { MONTHS_TEXTS } from "@/lib/constants/date.const";
+import { MONTHS_TEXTS } from "@/app/constants/date.const";
 import { useMemo, useState } from "react";
 import { Movie } from "../models/movie.model";
 

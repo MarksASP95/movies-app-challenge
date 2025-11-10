@@ -92,6 +92,7 @@ export default function MovieCard({
           <div>
             <div className="flex">{starsElements}</div>
             <h3 className="h3">{movie.title}</h3>
+            <p>{movie.genre}</p>
           </div>
           <p style={{ height: 168 }} className="opacity-60 overflow-hidden">
             {movie.description}
