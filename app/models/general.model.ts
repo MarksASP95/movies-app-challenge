@@ -10,3 +10,8 @@ export interface PaginatedResult<T> {
 export type SearchParamsPromise = Promise<{
   [key: string]: string | string[] | undefined;
 }>;
+
+export interface ServiceResult<T = any> {
+  success: boolean;
+  data: T | null;
+}

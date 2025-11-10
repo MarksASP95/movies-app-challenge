@@ -3,7 +3,7 @@ import Pagination from "@/app/components/pagination/pagination.component";
 import MoviesSearchBar from "@/app/components/search-bar.component";
 import { MovieService } from "@/app/services/movie.service";
 import { auth0 } from "@/lib/auth0";
-import { SearchParamsPromise } from "@/lib/models/general.model";
+import { SearchParamsPromise } from "@/app/models/general.model";
 import { redirect } from "next/navigation";
 
 export default async function Search({
