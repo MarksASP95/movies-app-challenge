@@ -15,6 +15,7 @@ describe("useMovieCardElements", () => {
       month: 5,
       day: 15,
     },
+    genre: "Adventure",
   };
 
   beforeEach(() => {

@@ -1,8 +1,8 @@
+import { Movie, MovieDB } from "@/app/models/movie.model";
+import { TMDB } from "@/app/models/tmdb.model";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MovieService } from "../movie.service";
-import { TMDB } from "@/app/models/tmdb.model";
 
-// Mock fetch globally
 global.fetch = vi.fn();
 
 describe("MovieService", () => {
@@ -28,10 +28,9 @@ describe("MovieService", () => {
         genre_ids: [12],
       };
 
-      // Access private method via type assertion
       const result = (movieService as any).serializeMovieFromResult(rawMovie);
 
-      expect(result).toEqual({
+      expect(result).toEqual(<Movie>{
         tmdbId: 123,
         title: "some movie",
         description: "some description",
@@ -58,10 +57,9 @@ describe("MovieService", () => {
         genres: [{ id: 12, name: "Adventure" }],
       };
 
-      // Access private method via type assertion
       const result = (movieService as any).serializeMovieFromDetails(rawMovie);
 
-      expect(result).toEqual({
+      expect(result).toEqual(<Movie>{
         tmdbId: 123,
         title: "some movie",
         description: "some description",
@@ -114,7 +112,7 @@ describe("MovieService", () => {
 
   describe("movieFromDB", () => {
     it("should transform database movie with release date", () => {
-      const dbMovie = {
+      const dbMovie: MovieDB = {
         id: 1,
         title: "DB Movie",
         description: "Description",
@@ -129,7 +127,7 @@ describe("MovieService", () => {
 
       const result = (movieService as any).movieFromDB(dbMovie);
 
-      expect(result).toEqual({
+      expect(result).toEqual(<Movie>{
         title: "DB Movie",
         description: "Description",
         posterUrl: "/poster.jpg",

@@ -4,7 +4,6 @@ import { auth0 } from "@/lib/auth0";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  // You can parse request body if needed
   const session = await auth0.getSession();
 
   if (!session) {
@@ -31,6 +30,5 @@ export async function POST(request: Request) {
 
   const result = await moviesService.saveFavorite(session.user.sub, movie);
 
-  // Respond with a basic message
   return NextResponse.json({ success: result.success, data: result.data });
 }

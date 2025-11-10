@@ -6,7 +6,6 @@ export async function GET(
   _: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // You can parse request body if needed
   const session = await auth0.getSession();
 
   if (!session) {

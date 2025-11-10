@@ -1,19 +1,20 @@
+import { PaginatedResult, ServiceResult } from "@/app/models/general.model";
 import { db } from "@/lib/db";
 import { favoritesTable, moviesTable } from "@/lib/db/schema";
-import { PaginatedResult, ServiceResult } from "@/app/models/general.model";
 import { and, asc, count, eq } from "drizzle-orm";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod.mjs";
 import z from "zod";
+import { MOVIE_GENRES } from "../constants/movie.const";
 import {
   FavoriteData,
   FavoriteMovieUpdateData,
   Movie,
+  MovieDB,
   RecommendedMovie,
 } from "../models/movie.model";
 import { TMDB } from "../models/tmdb.model";
 import { ObjectUtils } from "../utilts/object.util";
-import { MOVIE_GENRES } from "../constants/movie.const";
 
 export class MovieService {
   private readonly TMDB_READ_ACCESS_TOKEN = process.env
@@ -119,7 +120,7 @@ export class MovieService {
     };
   }
 
-  private movieFromDB(dbMovie: typeof moviesTable.$inferSelect): Movie {
+  private movieFromDB(dbMovie: MovieDB): Movie {
     return {
       description: dbMovie.description,
       posterUrl: dbMovie.posterUrl,
@@ -228,7 +229,7 @@ export class MovieService {
     return db
       .transaction(async (tx) => {
         try {
-          let savedMovie: typeof moviesTable.$inferSelect | undefined;
+          let savedMovie: MovieDB | undefined;
           const [existingMovie] = await tx
             .select()
             .from(moviesTable)
