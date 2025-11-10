@@ -1,9 +1,9 @@
 "use client";
-import { Toast, createToaster } from "@skeletonlabs/skeleton-react";
+import { Dialog, Toast, createToaster } from "@skeletonlabs/skeleton-react";
 import React, { useMemo, useState } from "react";
 import { FavoriteData, Movie, RecommendedMovie } from "../models/movie.model";
 import MovieCard from "./movie-card/movie-card.component";
-import MovieModal from "./movie-modal/movie-modal.component";
+import MovieModalContent from "./movie-modal/movie-modal-content.component";
 import PageSpinner from "./page-spinner/page-spinner.component";
 import RecommendationsModal from "./recommendations-modal/recommendations-modal.component";
 
@@ -172,15 +172,19 @@ export default function MoviesGrid({
           />
         )}
 
-        {selectedMovie && (
-          <MovieModal
-            isOpen={!!selectedMovie}
-            movie={selectedMovie.movie}
-            favoriteData={selectedMovie.favoriteData}
-            handleClose={() => setSelectedMovie(null)}
-            onFavoriteSave={handleFavoriteSubmit}
-          />
-        )}
+        <Dialog
+          open={!!selectedMovie}
+          onEscapeKeyDown={() => setSelectedMovie(null)}
+        >
+          {selectedMovie && (
+            <MovieModalContent
+              movie={selectedMovie.movie}
+              favoriteData={selectedMovie.favoriteData}
+              handleClose={() => setSelectedMovie(null)}
+              onFavoriteSave={handleFavoriteSubmit}
+            />
+          )}
+        </Dialog>
       </div>
       <PageSpinner visible={showSpinner} />
     </>
