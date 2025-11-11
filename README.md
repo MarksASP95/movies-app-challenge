@@ -21,22 +21,24 @@ This is my submission of the Code Challenge from Zarego. First of all, I am than
 > Note: On Vercel over AWS Amplify\
 Amplify had serious issues providing the client with the session cookie. It randomly stripped it away, which made it impossible to use the app core functionalities like managing favorites or get recommendations. I debugged for a whole day with no avail. I decided to deploy to Vercel, which did not have this issue. I understand if this would be a fault for the challenge, but I wanted to deliver it in any way I could.
 
-### APIs
+### External APIs
 
 - [TMDB](https://www.themoviedb.org/)
 - [OpenAI](https://openai.com/api/)
 
 ### Uses of AI
-- Testing configuration
+- Testing environment setup
 - Test cases recommendations
+- React debugging
+- Auth0 flow guidance
 
 ### Run locally
 In order to run the project locally, there are two prerequisites:
 1. Set up local PostgreSQL database
-    - Run psql postgres to enter the psql shell
+    - Run `psql postgres` to enter the psql shell
     - Create the database by running `CREATE DATABASE movies_app;`
     - Exit the shell
-2. Add the .env file to the root of the project. It’s attached to the email sent to Matias and Giuliana.
+2. Add the `.env` file to the root of the project. It’s attached to the email sent to Matias and Giuliana.
 3. `npm i` to install dependencies
 4. `npx drizzle-kit migrate` to create the migrations
 5. `npm run dev` to start the app
@@ -49,10 +51,10 @@ In order to run the project locally, there are two prerequisites:
 - Deployments are made by pushing to the `main` branch
 
 ### Notes
+- Auth0 free trial expires on **November 21**
+- Render free trial expires on **December 1**
 - As of today, the latest version of `@auth0/nextjs-auth0` is not compatible with NextJS 16. That’s the reason I downgraded to 15.
 - The OpenAI API account is using a paid tier, but no worries.
-- Auth0 free trial expires on November 21
-- Render free trial expires on December 1
 
 ### Extras
 - Trending movies. A view that shows the most popular movies today. It allows the user to check out movies from the start, without having to search.
