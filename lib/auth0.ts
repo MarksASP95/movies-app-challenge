@@ -7,7 +7,7 @@ export const auth0 = new Auth0Client({
   session: {
     cookie: {
       path: "/",
-      sameSite: "none",
+      sameSite: "lax",
       secure: process.env.ENV === "prod",
     },
   },
