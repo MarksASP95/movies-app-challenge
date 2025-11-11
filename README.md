@@ -62,7 +62,8 @@ In order to run the project locally, there are two prerequisites:
 - One-click recommendation search. By clicking on a recommendations, it redirects the user to the search view with search results from its title.
 
 ### Public link
-[Public link](https://movies-app-challenge.vercel.app/)
+✅ [Public link (Vercel)](https://movies-app-challenge.vercel.app/)\
+❌ [Public link (Amplify)](https://main.d2rp7em8vgb44f.amplifyapp.com/) (only for prove of deployment. The app might not work properly due to the reasons above)
 
 ### Video
 [Video](https://www.youtube.com/watch?v=rw0ogbhcvTU)
