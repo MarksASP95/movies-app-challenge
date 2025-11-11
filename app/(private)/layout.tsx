@@ -16,7 +16,7 @@ const PrivateViewsLayout = async ({
 
   return (
     <div>
-      <div className="px-10 py-2 w-screen flex justify-between">
+      <div className="private-layout px-10 py-2 w-screen flex justify-between">
         <Link
           className="underline decoration-dashed underline-offset-4"
           href="/"
@@ -29,16 +29,16 @@ const PrivateViewsLayout = async ({
             className="mr-2 underline decoration-dashed underline-offset-4"
             href="/favorites"
           >
-            ❤️ my favorites
+            ❤️ <span className="hidden md:inline">my favorites</span>
           </Link>
-          <span className="mr-2">|</span>
-          <span className="mr-2">👨🏻 {session.user.email}</span>
+          <span className="mr-2 hidden md:inline">|</span>
+          <span className="mr-2 hidden md:inline">👨🏻 {session.user.email}</span>
           <span className="mr-2">|</span>
           <Link
             className="mr-2 underline decoration-dashed underline-offset-4"
             href="/auth/logout"
           >
-            ❌ sign out
+            ❌ <span className="hidden md:inline">sign out</span>
           </Link>
         </div>
       </div>
