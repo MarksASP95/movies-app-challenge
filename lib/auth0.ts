@@ -4,11 +4,13 @@ import { OnCallbackContext, SessionData } from "@auth0/nextjs-auth0/types";
 import { NextResponse } from "next/server";
 
 export const auth0 = new Auth0Client({
+  appBaseUrl: process.env.AUTH0_BASE_URL || process.env.APP_BASE_URL,
   session: {
     cookie: {
       path: "/",
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production" || process.env.ENV === "prod",
+      secure:
+        process.env.NODE_ENV === "production" || process.env.ENV === "prod",
     },
   },
   onCallback: async (
