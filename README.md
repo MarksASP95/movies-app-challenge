@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+  ## Zarego Code Challenge
 
-## Getting Started
+Marco Suarez\
+Delivered on November 12, 2025
 
-First, run the development server:
+### Summary
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This is my submission of the Code Challenge from Zarego. First of all, I am thankful for this opportunity. This project allowed me to face interesting technical challenges and build an application that I’m proud of.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [NextJS 15 with App Router](https://nextjs.org/docs/15/app/getting-started)
+- [Auth0](https://auth0.com/)
+- ~~AWS Amplify~~ [Vercel*](https://vercel.com)
+- [PostegreSQL](https://www.postgresql.org/)
+  - [ORM: Drizzle](https://orm.drizzle.team/)
+  - Hosted on [Render](https://render.com/) or locally
+- [TailwindCSS](https://tailwindcss.com/)
+  - [Skeleton Design System](https://www.skeleton.dev/)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> Note: On Vercel over AWS Amplify\
+Amplify had serious issues providing the client with the session cookie. It randomly stripped it away, which made it impossible to use the app core functionalities like managing favorites or get recommendations. I debugged for a whole day with no avail. I decided to deploy to Vercel, which did not have this issue. I understand if this would be a fault for the challenge, but I wanted to deliver it in any way I could.
 
-## Learn More
+### APIs
 
-To learn more about Next.js, take a look at the following resources:
+- [TMDB](https://www.themoviedb.org/)
+- [OpenAI](https://openai.com/api/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Uses of AI
+- Testing configuration
+- Test cases recommendations
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Run locally
+In order to run the project locally, there are two prerequisites:
+1. Set up local PostgreSQL database
+    - Run psql postgres to enter the psql shell
+    - Create the database by running `CREATE DATABASE movies_app;`
+    - Exit the shell
+2. Add the .env file to the root of the project. It’s attached to the email sent to Matias and Giuliana.
+3. `npm i` to install dependencies
+4. `npx drizzle-kit migrate` to create the migrations
+5. `npm run dev` to start the app
 
-## Deploy on Vercel
+### Run tests
+- In realtime: `npm run test`
+- Once: `npm run test:run`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Deploy
+- Deployments are made by pushing to the `main` branch
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Notes
+- As of today, the latest version of `@auth0/nextjs-auth0` is not compatible with NextJS 16. That’s the reason I downgraded to 15.
+- The OpenAI API account is using a paid tier, but no worries.
+- Auth0 free trial expires on November 21
+- Render free trial expires on December 1
+
+### Extras
+- Trending movies. A view that shows the most popular movies today. It allows the user to check out movies from the start, without having to search.
+- Interactive rating. The interactive stars allow users to easily rate movies.
+- One-click recommendation search. By clicking on a recommendations, it redirects the user to the search view with search results from its title.
+
+### Public link
+[Public link](https://movies-app-challenge.vercel.app/)
+
+### Video
+[Video](https://www.youtube.com/watch?v=rw0ogbhcvTU)
