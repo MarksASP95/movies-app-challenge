@@ -6,6 +6,6 @@ customHeaders:
       - key: Access-Control-Allow-Methods
         value: GET,PUT,POST,OPTIONS,DELETE
       - key: Access-Control-Allow-Headers
-        value: Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token
+        value: Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Set-Cookie
       - key: Access-Control-Allow-Credentials
         value: "true"
