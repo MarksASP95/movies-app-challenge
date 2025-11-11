@@ -8,7 +8,7 @@ export const auth0 = new Auth0Client({
     cookie: {
       path: "/",
       sameSite: "lax",
-      secure: process.env.ENV === "prod",
+      secure: process.env.NODE_ENV === "production" || process.env.ENV === "prod",
     },
   },
   onCallback: async (
